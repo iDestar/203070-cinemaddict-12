@@ -13,7 +13,7 @@ const createProfileTemplate = () => {
   );
 };
 
-const createNavigationTemplate = () => {
+  const createNavigationTemplate = () => {
   return (
     `<nav class="main-navigation">
       <div class="main-navigation__items">
