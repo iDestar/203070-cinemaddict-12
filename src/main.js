@@ -1,5 +1,5 @@
 
-const CARDS_IN_BLOCK_COUNT = 2;
+  const CARDS_IN_BLOCK_COUNT = 2;
 const CARDS_COUNT = 5;
 
 const createProfileTemplate = () => {
