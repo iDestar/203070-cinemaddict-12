@@ -44,7 +44,15 @@ for (let i = 0; i < CARDS_COUNT; i++) {
   render(siteFilmConteinerElement, createFilmCardTemplate(filmsCardArray[i]), `beforeend`);
 }
 
-render(siteFilmListElement, createShowMoreButton(), `beforeend`);
+if (filmsCardArray.length > CARDS_COUNT) {
+  let renderedCardsCount = CARDS_COUNT;
+  render(siteFilmListElement, createShowMoreButton(), `beforeend`);
+  const showMoreButton = document.querySelector(`.films-list__show-more`);
+  showMoreButton.addEventListener(`click`, evt function (
+
+  ));
+}
+
 
 const siteFilmsElement = document.querySelector(`.films`);
 
