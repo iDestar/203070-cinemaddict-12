@@ -48,9 +48,15 @@ if (filmsCardArray.length > CARDS_COUNT) {
   let renderedCardsCount = CARDS_COUNT;
   render(siteFilmListElement, createShowMoreButton(), `beforeend`);
   const showMoreButton = document.querySelector(`.films-list__show-more`);
-  showMoreButton.addEventListener(`click`, evt function (
-
-  ));
+  showMoreButton.addEventListener(`click`, function (evt) {
+    evt.preventDefault();
+    filmsCardArray.slice(renderedCardsCount, renderedCardsCount + CARDS_COUNT).forEach((card) => render(siteFilmConteinerElement, createFilmCardTemplate(card), `beforeend`));
+    renderedCardsCount += CARDS_COUNT;
+    if (renderedCardsCount >= filmsCardArray.length) {
+      showMoreButton.remove();
+    }
+  }
+  );
 }
 
 
