@@ -1,5 +1,6 @@
 export const createFilmCardTemplate = (card) => {
   const {original, poster, description, rating, year, genre, comments} = card;
+
   return (
     `<article class="film-card">
       <h3 class="film-card__title">${original}</h3>
