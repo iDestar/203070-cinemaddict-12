@@ -1,5 +1,6 @@
+import {createElement} from "../utils.js";
 import {commentSection} from "./coment-section.js";
-export const createFilmPopupTemplate = (card) => {
+const createFilmPopupTemplate = (card) => {
   const {name, original, poster, description, rating, genre, ages, director, writers, actors, country, comments} = card;
   return (
     `<section class="film-details">
@@ -75,3 +76,27 @@ export const createFilmPopupTemplate = (card) => {
     </section>`
   );
 };
+
+
+export default class FilmList {
+  constructor(card) {
+    this._element = null;
+    this.card = card;
+  }
+
+  getTemplate() {
+    return createFilmPopupTemplate(this.card);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
