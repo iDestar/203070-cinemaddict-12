@@ -79,7 +79,7 @@ if (filmsCardArray.length > CARDS_COUNT) {
 
   showMoreButton.getElement().addEventListener(`click`, function (evt) {
     evt.preventDefault();
-    filmsCardArray.slice(renderedCardsCount, renderedCardsCount + CARDS_COUNT).forEach((card) => renderFilm(siteFilmConteinerElement, card));
+    filmsCardArray.slice(renderedCardsCount, renderedCardsCount + CARDS_COUNT).forEach((film) => renderFilm(siteFilmConteinerElement, film));
     renderedCardsCount += CARDS_COUNT;
     if (renderedCardsCount >= filmsCardArray.length) {
       showMoreButton.getElement().remove();
