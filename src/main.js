@@ -79,7 +79,7 @@ if (filmsCardArray.length > CARDS_COUNT) {
 
   showMoreButton.getElement().addEventListener(`click`, function (evt) {
     evt.preventDefault();
-    filmsCardArray.slice(renderedCardsCount, renderedCardsCount + CARDS_COUNT).forEach((card) => renderElement(siteFilmConteinerElement, new FilmCard(card).getElement(), RenderPosition.BEFOREEND));
+    filmsCardArray.slice(renderedCardsCount, renderedCardsCount + CARDS_COUNT).forEach((card) => renderFilm(siteFilmConteinerElement, card));
     renderedCardsCount += CARDS_COUNT;
     if (renderedCardsCount >= filmsCardArray.length) {
       showMoreButton.getElement().remove();
@@ -106,6 +106,4 @@ for (let i = 0; i < CARDS_IN_BLOCK_COUNT; i++) {
 }
 
 const siteFooterElement = document.querySelector(`.footer`);
-// renderElement(siteFooterElement, new FilmPopUp(filmsCardArray[0]).getElement(), RenderPosition.BEFOREEND);
-
 renderElement(siteFooterElement, new MovieAmount().getElement(), RenderPosition.BEFOREEND);
