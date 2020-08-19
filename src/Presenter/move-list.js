@@ -96,7 +96,18 @@ export default class Board {
       }
     };
 
-    filmCardComponent.setOpenClickHandler(() => {
+
+    filmCardComponent.setPosterClickHandler(() => {
+      showFilmDetails();
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+    filmCardComponent.setTitleClickHandler(() => {
+      showFilmDetails();
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+    filmCardComponent.setCommentsClickHandler(() => {
       showFilmDetails();
       document.addEventListener(`keydown`, onEscKeyDown);
     });
@@ -108,6 +119,7 @@ export default class Board {
 
     render(this._listContainerComponent, filmCardComponent, RenderPosition.BEFOREEND);
   }
+
 
   _renderFilms(from, to) {
     this._boardFilms

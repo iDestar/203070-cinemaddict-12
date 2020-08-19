@@ -48,20 +48,42 @@ export default class FilmCard extends AbstractView {
     this._isAlreadyWatched = film.isAlreadyWatched;
     this._isAddToFavorites = film.isAddToFavorites;
     this._film = film;
-    this._openClickHandler = this._openClickHandler.bind(this);
+    this._posterClickHandler = this._posterClickHandler.bind(this);
+    this._titleClickHandler = this._titleClickHandler.bind(this);
+    this._commentsClickHandler = this._commentsClickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._film);
   }
 
-  _openClickHandler(evt) {
+  _posterClickHandler(evt) {
     evt.preventDefault();
-    this._callback.openClick();
+    this._callback.posterClick();
   }
 
-  setOpenClickHandler(callback) {
-    this._callback.openClick = callback;
-    this.getElement().addEventListener(`click`, this._openClickHandler);
+  setPosterClickHandler(callback) {
+    this._callback.posterClick = callback;
+    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, this._posterClickHandler);
+  }
+
+  _titleClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.titleClick();
+  }
+
+  setTitleClickHandler(callback) {
+    this._callback.titleClick = callback;
+    this.getElement().querySelector(`.film-card__title`).addEventListener(`click`, this._titleClickHandler);
+  }
+
+  _commentsClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.commentsClick();
+  }
+
+  setCommentsClickHandler(callback) {
+    this._callback.commentsClick = callback;
+    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._commentsClickHandler);
   }
 }
