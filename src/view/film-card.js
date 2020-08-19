@@ -1,6 +1,20 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
+
+const MAX_NUMBER_CHARACTERS = 139;
+
+const truncatesText = (text, limit) => {
+  const textNumbers = text.length;
+  if (textNumbers <= limit) {
+    return text;
+  }
+  const briefDescription = text.slice(0, limit) + `...`;
+
+  return briefDescription;
+};
+
 const createFilmCardTemplate = (card) => {
   const {original, poster, description, rating, year, genre, comments} = card;
+  const newDescription = truncatesText(description, MAX_NUMBER_CHARACTERS);
 
   return (
     `<article class="film-card">
@@ -12,7 +26,7 @@ const createFilmCardTemplate = (card) => {
         <span class="film-card__genre">${genre.join(`, `)}</span>
       </p>
       <img src="./images/posters/${poster}" alt="" class="film-card__poster">
-      <p class="film-card__description">${description}</p>
+      <p class="film-card__description">${newDescription}</p>
       <a class="film-card__comments">${comments.length} comments</a>
       <form class="film-card__controls">
         <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>
@@ -24,25 +38,30 @@ const createFilmCardTemplate = (card) => {
 };
 
 
-export default class FilmCard {
-  constructor(card) {
-    this._element = null;
-    this.card = card;
+export default class FilmCard extends AbstractView {
+  constructor(film) {
+    super();
+
+    this._film = film;
+
+    this._isAddToWatchListt = film.isAddToWatchList;
+    this._isAlreadyWatched = film.isAlreadyWatched;
+    this._isAddToFavorites = film.isAddToFavorites;
+    this._film = film;
+    this._openClickHandler = this._openClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this.card);
+    return createFilmCardTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _openClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.openClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setOpenClickHandler(callback) {
+    this._callback.openClick = callback;
+    this.getElement().addEventListener(`click`, this._openClickHandler);
   }
 }

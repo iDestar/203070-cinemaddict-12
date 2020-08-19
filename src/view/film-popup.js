@@ -1,5 +1,6 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 import {commentSection} from "./coment-section.js";
+
 const createFilmPopupTemplate = (card) => {
   const {name, original, poster, description, rating, genre, ages, director, writers, actors, country, comments} = card;
   return (
@@ -78,25 +79,29 @@ const createFilmPopupTemplate = (card) => {
 };
 
 
-export default class FilmList {
-  constructor(card) {
-    this._element = null;
-    this.card = card;
+export default class FilmPopUp extends AbstractView {
+  constructor(film) {
+    super();
+
+    this._isAddToWatchListt = film.isAddToWatchList;
+    this._isAlreadyWatched = film.isAlreadyWatched;
+    this._isAddToFavorites = film.isAddToFavorites;
+    this._isAdult = film.isAdult;
+    this._film = film;
+    this._closeClickHandler = this._closeClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createFilmPopupTemplate(this.card);
+    return createFilmPopupTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _closeClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseClickHandler(callback) {
+    this._callback.closeClick = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeClickHandler);
   }
 }
