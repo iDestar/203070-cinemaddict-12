@@ -2,7 +2,7 @@ const MOCKCOUNT = 18;
 import ProfileView from "./view/profile.js";
 import NavigationView from "./view/navigation.js";
 import SortView from "./view/sort.js";
-import BoardPresenter from "./presenter/move-list.js";
+import BoardPresenter from "./presenter/board.js";
 import MovieAmountView from "./view/movie-amount.js";
 import {getFilmCard} from "./mock/card.js";
 import {render, RenderPosition} from "./utils.js";
