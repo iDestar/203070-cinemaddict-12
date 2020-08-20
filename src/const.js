@@ -78,3 +78,9 @@ export const COMMENT_DATE = [
   `2011/8/31 2:19`,
   `2014/4/31 7:23`,
 ];
+
+export const SortType = {
+  DEFAULT: `default`,
+  DATE: `date`,
+  RATING: `rating`,
+};

@@ -82,11 +82,6 @@ const createFilmPopupTemplate = (card) => {
 export default class FilmPopUp extends AbstractView {
   constructor(film) {
     super();
-
-    this._isAddToWatchListt = film.isAddToWatchList;
-    this._isAlreadyWatched = film.isAlreadyWatched;
-    this._isAddToFavorites = film.isAddToFavorites;
-    this._isAdult = film.isAdult;
     this._film = film;
     this._closeClickHandler = this._closeClickHandler.bind(this);
   }
