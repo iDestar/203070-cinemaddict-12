@@ -183,9 +183,8 @@ export default class Board {
   }
 
   _clearFilmList() {
-    const siteFilmsListContainer = this._boardContainer.querySelector(`.films-list__container`);
-    siteFilmsListContainer.innerHTML = ``;
-    this._renderedFilmCount = FILMS_COUNT_PER_STEP;
+    this._listContainerComponent.getElement().innerHTML = ``;
+    this._renderedFilmsCount = FILMS_COUNT_PER_STEP;
   }
 
 
