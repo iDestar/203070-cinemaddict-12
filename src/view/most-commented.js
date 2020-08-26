@@ -12,7 +12,7 @@ const createMostCommentedTemplate = () => {
 
 
 export default class MostCommented extends AbstractView {
-  getTemplate() {
+  _getTemplate() {
     return createMostCommentedTemplate();
   }
 }

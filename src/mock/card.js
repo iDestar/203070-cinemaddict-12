@@ -5,12 +5,14 @@ import {GENRES} from "../const.js";
 import {AGES} from "../const.js";
 import {COUNTRIES} from "../const.js";
 import {NAMES} from "../const.js";
-import {EMOJI} from "../const.js";
+import {commentEmojis} from "../const.js";
 import {COMMENT_DATE} from "../const.js";
 import {getRandomArrayElement} from "../utils.js";
 import {getListRandomLength} from "../utils.js";
 import {getRandomFloatNumber} from "../utils.js";
 import {getRandomNumber} from "../utils.js";
+import {nanoid} from "nanoid";
+
 
 const getRandomGenres = (arr) => {
   const result = [];
@@ -23,7 +25,7 @@ const getRandomGenres = (arr) => {
 
 const generateComment = () => {
   return {
-    emoji: getRandomArrayElement(EMOJI),
+    emoji: getRandomArrayElement(commentEmojis),
     text: getListRandomLength(DESCRIPTION, 1, 5).join(` `),
     author: getRandomArrayElement(NAMES),
     date: getRandomArrayElement(COMMENT_DATE),
@@ -38,6 +40,7 @@ const generateComments = (count) => {
 export const getFilmCard = function () {
   const title = getRandomArrayElement(TITLE);
   return {
+    id: nanoid(),
     name: title,
     original: title,
     poster: getRandomArrayElement(POSTERS),

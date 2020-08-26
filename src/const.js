@@ -65,11 +65,11 @@ export const NAMES = [
   `Aliquam erat `,
 ];
 
-export const EMOJI = [
-  `smile.png`,
-  `sleeping.png`,
-  `puke.png`,
-  `angry.png`,
+export const commentEmojis = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
 ];
 
 export const COMMENT_DATE = [

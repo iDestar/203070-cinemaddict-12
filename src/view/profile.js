@@ -11,7 +11,7 @@ const createProfileTemplate = () => {
 
 
 export default class Profile extends AbstractView {
-  getTemplate() {
+  _getTemplate() {
     return createProfileTemplate();
   }
 }

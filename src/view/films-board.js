@@ -1,7 +1,7 @@
 import AbstractView from "./abstract.js";
 
 export default class FilmsBoard extends AbstractView {
-  getTemplate() {
+  _getTemplate() {
     return `<section class="films"></section>`;
   }
 }

@@ -36,31 +36,30 @@ export const RenderPosition = {
   BEFOREEND: `beforeend`
 };
 
-export const render = (container, child, place) => {
+export const render = (container, element, place = RenderPosition.BEFOREEND) => {
   if (container instanceof Abstract) {
     container = container.getElement();
   }
 
-  if (child instanceof Abstract) {
-    child = child.getElement();
+  if (element instanceof Abstract) {
+    element = element.getElement();
   }
 
   switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(child);
-      break;
     case RenderPosition.BEFOREEND:
-      container.append(child);
+      container.append(element);
+      break;
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
       break;
   }
 };
 
 
 export const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
+  const tempContainer = document.createElement(`div`);
+  tempContainer.insertAdjacentHTML(RenderPosition.AFTERBEGIN, template);
+  return tempContainer.firstChild;
 };
 
 export const remove = (component) => {
@@ -72,22 +71,38 @@ export const remove = (component) => {
   component.removeElement();
 };
 
-
-export const showPopup = (child) => {
-  if (child instanceof Abstract) {
-    child = child.getElement();
+export const replace = (oldItem, newItem) => {
+  if (oldItem instanceof Abstract) {
+    oldItem = oldItem.getElement();
   }
-  document.body.appendChild(child);
-  document.body.classList.add(`hide-overflow`);
+
+  if (newItem instanceof Abstract) {
+    newItem = newItem.getElement();
+  }
+
+  const parentElement = oldItem.parentElement;
+
+  if (parentElement === null || !oldItem || !newItem) {
+    throw new Error(`Can't replace`);
+  }
+
+  parentElement.replaceChild(newItem, oldItem);
 };
 
-export const closePopup = (child) => {
-  if (child instanceof Abstract) {
-    child = child.getElement();
+
+export const updateItem = (itemList, item) => {
+  const itemIndex = itemList.findIndex((it) => it.id === item.id);
+  if (itemIndex === -1) {
+    return itemList;
   }
-  document.body.removeChild(child);
-  document.body.classList.remove(`hide-overflow`);
+
+  return [
+    ...itemList.slice(0, itemIndex),
+    item,
+    ...itemList.slice(itemIndex + 1),
+  ];
 };
+
 
 const getWeightForNullValue = (valueA, valueB) => {
   if (valueA === null && valueB === null) {

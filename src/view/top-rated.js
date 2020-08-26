@@ -12,7 +12,7 @@ const createTopRatedTemplate = () => {
 
 
 export default class MostRated extends AbstractView {
-  getTemplate() {
+  _getTemplate() {
     return createTopRatedTemplate();
   }
 }

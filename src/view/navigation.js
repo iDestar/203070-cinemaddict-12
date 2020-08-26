@@ -22,7 +22,7 @@ export default class Navigation extends AbstractView {
 
     this._films = films;
   }
-  getTemplate() {
+  _getTemplate() {
     return createNavigationTemplate(this._films);
   }
 }
