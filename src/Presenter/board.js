@@ -145,8 +145,7 @@ export default class Board {
     render(this._boardComponent, this._listComponent);
     this._allFilmsContainerElement = this._boardComponent.getElement().querySelector(`.films-list__container`);
     this._renderAllFilmsOnStart();
-  //  this._renderTopRatedFilms();
-  //  this._renderTopCommentedFilms();
+
   }
 
   _renderTopCommentedFilms() {
