@@ -53,7 +53,7 @@ const createEmojiListTemplate = (emoji, chosenEmoji) => {
 const createFilmPopupTemplate = (card) => {
   const {name, original, poster, description, rating, genre, ages, director, writers, actors, country, comments, isViewed, isInWatchList, isFavorited, commentEmoji} = card;
   const commentsList = generateTemplate(comments, createCommentTemplate);
-  const emojies = commentEmojis.map((it) => createEmojiListTemplate(it, commentEmoji)).join(``);
+  const emoji = commentEmojis.map((it) => createEmojiListTemplate(it, commentEmoji)).join(``);
 
   return (
     `<section class="film-details">
@@ -129,7 +129,7 @@ const createFilmPopupTemplate = (card) => {
         <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
       </label>
       <div class="film-details__emoji-list">
-        ${emojies}
+        ${emoji}
           </div>
         </form>
     </section>`
