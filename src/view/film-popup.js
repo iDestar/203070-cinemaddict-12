@@ -217,7 +217,7 @@ export default class FilmPopUp extends SmartView {
 
   _addToWatchListHandler(evt) {
     this.updateData({
-      isViewed: evt.target.checked,
+      isInWatchList: evt.target.checked,
     }, true);
     this._sendNewFilmData(this._parseDataToFilm(this._data));
   }
