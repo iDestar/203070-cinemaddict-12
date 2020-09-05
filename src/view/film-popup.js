@@ -215,12 +215,6 @@ export default class FilmPopUp extends SmartView {
     filmDetailsCloseButton.addEventListener(`click`, this._closeFilmDetailsClickHandler);
   }
 
-  _addToWatchListHandler(evt) {
-    this.updateData({
-      isInWatchList: evt.target.checked,
-    }, true);
-    this._sendNewFilmData(this._parseDataToFilm(this._data));
-  }
 
   _addToWatchedListHandler(evt) {
     this.updateData({
