@@ -107,6 +107,8 @@ export default class FilmPresenter {
     remove(this._filmDetailsComponent);
     if (this._newFilmData) {
       this._updateData(
+          UserAction.UPDATE_FILM,
+          UpdateType.MINOR,
           Object.assign({}, this._newFilmData)
       );
       this._newFilmData = null;

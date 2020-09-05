@@ -89,7 +89,6 @@ export const replace = (oldItem, newItem) => {
   parentElement.replaceChild(newItem, oldItem);
 };
 
-
 export const updateItem = (itemList, item) => {
   const itemIndex = itemList.findIndex((it) => it.id === item.id);
   if (itemIndex === -1) {
