@@ -7,11 +7,11 @@ export default class Observer {
     this._observers.push(observer);
   }
 
-  removeObserver(observer) {
-    this._observers = this._observers.filter((existedObserver) => existedObserver !== observer);
+  deleteObserver(observer) {
+    this._observers.filter((existedObserver) => !(existedObserver === observer));
   }
 
-  _broadcast(event, payload) {
+  _notify(event, payload) {
     this._observers.forEach((observer) => observer(event, payload));
   }
 }

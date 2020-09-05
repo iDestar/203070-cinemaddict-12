@@ -2,6 +2,9 @@
 import SmartView from './smart.js';
 import {commentEmojis} from '../const.js';
 
+import {nanoid} from "nanoid";
+import he from 'he';
+
 const generateTemplate = (data, template) => {
   return data.map((it) => template(it)).join(``);
 };
@@ -11,17 +14,17 @@ const setChecked = (item) => {
 };
 
 const createCommentTemplate = (comment) => {
-  const {text, emoji, name} = comment;
+  const {id, text, emoji, name} = comment;
   return `<li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">
             </span>
             <div>
-              <p class="film-details__comment-text">${text}</p>
+              <p class="film-details__comment-text">${he.encode(text)}</p>
               <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${name}</span>
                 <span class="film-details__comment-day"></span>
-                <button class="film-details__comment-delete">Delete</button>
+                <button class="film-details__comment-delete" data-id="${id}">Delete</button>
               </p>
             </div>
           </li>`;
@@ -122,7 +125,7 @@ const createFilmPopupTemplate = (card) => {
       ${commentsList}
     </ul>
     <div class="film-details__new-comment">
-      <div for="add-emoji" class="film-details__add-emoji-label">
+      <div class="film-details__add-emoji-label">
       ${commentEmoji ? createEmojiTemplate(commentEmoji) : ``}
       </div>
       <label class="film-details__comment-label">
@@ -148,9 +151,44 @@ export default class FilmPopUp extends SmartView {
     this._addToWatchedListHandler = this._addToWatchedListHandler.bind(this);
     this._addToFavoriteListHandler = this._addToFavoriteListHandler.bind(this);
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
+    this._deleteCommentClickHandler = this._deleteCommentClickHandler.bind(this);
+    this._sendCommentKeydownHandler = this._sendCommentKeydownHandler.bind(this);
 
     this._restoreHandlers();
   }
+
+  _deleteCommentClickHandler(evt) {
+    evt.preventDefault();
+    const commentIndex = this._data.comments.findIndex((comment) => comment.id === evt.target.dataset.id);
+    const comments = [
+      ...this._data.comments.slice(0, commentIndex),
+      ...this._data.comments.slice(commentIndex + 1),
+    ];
+    this.updateData({comments});
+    this._sendNewFilmData(this._parseDataToFilm(this._data));
+  }
+
+  _sendCommentKeydownHandler(evt) {
+    if ((evt.ctrlKey || evt.metaKey) && evt.key === `Enter`) {
+      evt.preventDefault();
+      if (!this._data.commentEmoji) {
+        return;
+      }
+      const comment = {
+        id: nanoid(),
+        text: evt.target.value,
+        emoji: this._data.commentEmoji,
+        name: `Vladimir`,
+        date: new Date(),
+      };
+      const comments = this._data.comments;
+      comments.push(comment);
+      this.updateData({commentEmoji: ``}, true);
+      this.updateData({comments});
+      this._sendNewFilmData(this._parseDataToFilm(this._data));
+    }
+  }
+
 
   _parseDataToFilm(data) {
     delete data.commentEmoji;
@@ -213,5 +251,12 @@ export default class FilmPopUp extends SmartView {
         .addEventListener(`change`, this._addToFavoriteListHandler);
     this.getElement().querySelector(`.film-details__emoji-list`)
         .addEventListener(`change`, this._emojiChangeHandler);
+    this.getElement().querySelector(`.film-details__comment-input`)
+        .addEventListener(`keydown`, this._sendCommentKeydownHandler);
+    const commentsDeleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    if (commentsDeleteButtons) {
+      commentsDeleteButtons.forEach((deleteButton) => deleteButton.addEventListener(`click`, this._deleteCommentClickHandler));
+    }
+
   }
 }

@@ -1,38 +1,37 @@
 const MOCKCOUNT = 18;
 import ProfileView from "./view/profile.js";
-import NavigationView from "./view/navigation.js";
 import BoardPresenter from "./presenter/board.js";
-
 import MovieAmountView from "./view/movie-amount.js";
 import {getFilmCard} from "./mock/card.js";
 import {render} from "./utils.js";
-import {generateNavigationFilter} from "./mock/filter.js";
 
+import FilmsModel from './model/films.js';
+import FilterModel from './model/filter.js';
+import FilterPresenter from './presenter/filter.js';
+
+const siteHeaderElement = document.querySelector(`.header`);
+const siteMainElement = document.querySelector(`.main`);
+const siteFooterElement = document.querySelector(`.footer`);
 
 const getFilmCardCount = (count) => {
   return new Array(count).fill(``).map(getFilmCard);
 };
 
 const filmsCardArray = getFilmCardCount(MOCKCOUNT);
+const filmsViewed = filmsCardArray.filter((film) => film.isViewed).length;
 
-const mainFilter = generateNavigationFilter(filmsCardArray);
+const filmsModel = new FilmsModel();
+filmsModel.setFilms(filmsCardArray);
 
-
-const siteHeaderElement = document.querySelector(`.header`);
-const siteMainElement = document.querySelector(`.main`);
-const siteFooterElement = document.querySelector(`.footer`);
-
-const siteHeaderComponent = new ProfileView();
-render(siteHeaderElement, siteHeaderComponent);
+const filterModel = new FilterModel();
 
 
-const navigationComponent = new NavigationView(mainFilter);
-render(siteMainElement, navigationComponent);
+render(siteHeaderElement, new ProfileView(filmsViewed));
 
+const filmsListPresenter = new BoardPresenter(siteMainElement, filmsModel, filterModel);
+const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel);
 
-const boardPresenter = new BoardPresenter(siteMainElement);
-boardPresenter.init(filmsCardArray);
+filterPresenter.init();
+filmsListPresenter.init(filmsCardArray);
 
-
-const footerStatComponent = new MovieAmountView(filmsCardArray);
-render(siteFooterElement, footerStatComponent);
+render(siteFooterElement, new MovieAmountView(filmsViewed).getElement());

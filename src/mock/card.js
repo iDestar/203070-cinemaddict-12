@@ -25,6 +25,7 @@ const getRandomGenres = (arr) => {
 
 const generateComment = () => {
   return {
+    id: nanoid(),
     emoji: getRandomArrayElement(commentEmojis),
     text: getListRandomLength(DESCRIPTION, 1, 5).join(` `),
     author: getRandomArrayElement(NAMES),

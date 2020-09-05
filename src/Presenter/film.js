@@ -1,5 +1,5 @@
 import {render, replace, remove} from "../utils.js";
-
+import {UpdateType, UserAction} from '../const.js';
 import FilmPopUpView from "../view/film-popup.js";
 import FilmsCardView from "../view/film-card.js";
 
@@ -72,18 +72,24 @@ export default class FilmPresenter {
 
   _addToWatchListHandler() {
     this._updateData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
         Object.assign({}, this._film, {isInWatchList: !this._film.isInWatchList})
     );
   }
 
   _markAsWatchedHandler() {
     this._updateData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
         Object.assign({}, this._film, {isViewed: !this._film.isViewed})
     );
   }
 
   _markAsFavoriteHandler() {
     this._updateData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
         Object.assign({}, this._film, {isFavorited: !this._film.isFavorited})
     );
   }

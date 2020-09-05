@@ -102,39 +102,3 @@ export const updateItem = (itemList, item) => {
     ...itemList.slice(itemIndex + 1),
   ];
 };
-
-
-const getWeightForNullValue = (valueA, valueB) => {
-  if (valueA === null && valueB === null) {
-    return 0;
-  }
-
-  if (valueA === null) {
-    return 1;
-  }
-
-  if (valueB === null) {
-    return -1;
-  }
-  return null;
-};
-
-export const sortFilmDate = (filmA, filmB) => {
-  const weight = getWeightForNullValue(filmA.releaseDate, filmB.releaseDate);
-
-  if (weight !== null) {
-    return weight;
-  }
-
-  return filmB.releaseDate - filmA.releaseDate;
-};
-
-export const sortFilmRating = (filmA, filmB) => {
-  const weight = getWeightForNullValue(filmA.rating, filmB.rating);
-
-  if (weight !== null) {
-    return weight;
-  }
-
-  return filmB.rating - filmA.rating;
-};
