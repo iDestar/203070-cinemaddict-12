@@ -5,7 +5,7 @@ import NoFilmView from "../view/no-film.js";
 import ShowMoreButtonView from "../view/show-more-button.js";
 import FilmPresenter from './film.js';
 import {render, remove} from "../utils.js";
-import {SortType, UpdateType, UserAction} from "../const.js";
+import {FilterType, SortType, UpdateType, UserAction} from "../const.js";
 import {filter} from '../filter.js';
 
 const FILMS_COUNT_PER_STEP = 5;
@@ -30,12 +30,25 @@ export default class Board {
     this._clickSortingHandler = this._clickSortingHandler.bind(this);
     this._openOnlyOneFilmPopup = this._openOnlyOneFilmPopup.bind(this);
     this._handleModelAction = this._handleModelAction.bind(this);
-    this._filmsModel.addObserver(this._handleModelAction);
-    this._filterModel.addObserver(this._handleModelAction);
+
   }
 
   init() {
     this._renderFilmsBoard();
+    this.isDestroy = false;
+
+    this._filmsModel.addObserver(this._handleModelAction);
+    this._filterModel.addObserver(this._handleModelAction);
+  }
+
+  destroy() {
+    this._clearFilmsBoard({resetRenderedTaskCount: true, resetSortType: true});
+    remove(this._listComponent);
+    remove(this._boardComponent);
+    this.isDestroy = true;
+
+    this._filmsModel.deleteObserver(this._handleModelAction);
+    this._filterModel.deleteObserver(this._handleModelAction);
   }
 
   _getFilms() {
@@ -60,7 +73,10 @@ export default class Board {
 
     remove(this._filmsSortingComponent);
     remove(this._noDataComponent);
-    remove(this._showMoreButtonComponent);
+
+    if (this._showMoreButtonComponent) {
+      remove(this._showMoreButtonComponent);
+    }
 
     if (resetRenderedTaskCount) {
       this._filmsShowing = FILMS_COUNT_PER_STEP;
@@ -80,6 +96,9 @@ export default class Board {
   }
 
   _handleModelAction(updateType, update) {
+    if (updateType === UpdateType.MINOR && this._filterModel.getFilter() === FilterType.ALL) {
+      updateType = UpdateType.PATCH;
+    }
     switch (updateType) {
       case UpdateType.PATCH:
         this._filmPresenter[update.id].init(update);

@@ -1,10 +1,13 @@
 import AbstractView from "./abstract.js";
 
+const filterButtonActiveClass = `main-navigation__item--active`;
+const statsButtonActiveClass = `main-navigation__additional--active`;
+
 
 const createNavigationTemplate = (filters, currentFilter) => {
   const createFilterTemplate = (filterItem) => {
     const {type, name, count} = filterItem;
-    const isActiveItem = type === currentFilter ? `main-navigation__item--active` : ``;
+    const isActiveItem = type === currentFilter ? filterButtonActiveClass : ``;
     return `<a href="#${name}" class="main-navigation__item ${isActiveItem}" data-filter-type=${type} >${name}<span class="main-navigation__item-count">${count}</span></a>`;
   };
 
@@ -25,10 +28,13 @@ export default class Navigation extends AbstractView {
     this._filters = filters;
     this._currentFilter = currentFilter;
     this._filterClickHandler = this._filterClickHandler.bind(this);
+    this._statsClickHandler = this._statsClickHandler.bind(this);
   }
+
   _getTemplate() {
     return createNavigationTemplate(this._filters, this._currentFilter);
   }
+
   _filterClickHandler(evt) {
     evt.preventDefault();
     if (evt.target.tagName !== `A`) {
@@ -41,5 +47,21 @@ export default class Navigation extends AbstractView {
     this._callback.click = callback;
     this.getElement().querySelector(`.main-navigation__items`)
         .addEventListener(`click`, this._filterClickHandler);
+  }
+
+  _statsClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.statsClick();
+    this.getElement().querySelector(`.main-navigation__additional`).classList.add(statsButtonActiveClass);
+    const activeFilter = this.getElement().querySelector(`.${filterButtonActiveClass}`);
+    if (activeFilter) {
+      activeFilter.classList.remove(filterButtonActiveClass);
+    }
+  }
+
+  setStatsClickHandler(callback) {
+    this._callback.statsClick = callback;
+    this.getElement().querySelector(`.main-navigation__additional`)
+        .addEventListener(`click`, this._statsClickHandler);
   }
 }

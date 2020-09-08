@@ -16,7 +16,7 @@ const addActiveClass = (item) => {
 };
 
 const createFilmCardTemplate = (card) => {
-  const {original, poster, description, rating, year, genre, comments, isViewed, isInWatchList, isFavorited} = card;
+  const {original, poster, description, rating, year, genres, comments, isViewed, isInWatchList, isFavorited} = card;
   const newDescription = truncatesText(description, MAX_NUMBER_CHARACTERS);
 
   return (
@@ -26,7 +26,7 @@ const createFilmCardTemplate = (card) => {
       <p class="film-card__info">
         <span class="film-card__year">${year}</span>
         <span class="film-card__duration">1h 55m</span>
-        <span class="film-card__genre">${genre.join(`, `)}</span>
+        <span class="film-card__genre">${genres.join(`, `)}</span>
       </p>
       <img src="./images/posters/${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${newDescription}</p>

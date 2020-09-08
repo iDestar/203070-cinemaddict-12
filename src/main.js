@@ -29,9 +29,9 @@ const filterModel = new FilterModel();
 render(siteHeaderElement, new ProfileView(filmsViewed));
 
 const filmsListPresenter = new BoardPresenter(siteMainElement, filmsModel, filterModel);
-const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel);
+const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel, filmsListPresenter);
 
 filterPresenter.init();
 filmsListPresenter.init(filmsCardArray);
 
-render(siteFooterElement, new MovieAmountView(filmsViewed).getElement());
+render(siteFooterElement, new MovieAmountView(filmsCardArray).getElement());

@@ -101,3 +101,17 @@ export const updateItem = (itemList, item) => {
     ...itemList.slice(itemIndex + 1),
   ];
 };
+
+export const userRank = (filmsViewed) => {
+  let rank = ``;
+
+  if (filmsViewed > 0 && filmsViewed < 11) {
+    rank = `novice`;
+  } else if (filmsViewed > 10 && filmsViewed < 21) {
+    rank = `fan`;
+  } else if (filmsViewed > 20) {
+    rank = `movie buff`;
+  }
+
+  return rank;
+};

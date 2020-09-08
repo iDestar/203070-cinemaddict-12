@@ -72,6 +72,15 @@ export const commentEmojis = [
   `angry`,
 ];
 
+export const DateGap = {
+  MONTH: 12,
+  DAYS: 7,
+  HOURS: 10,
+  MINUTES: 60,
+};
+
+export const MINUTES_IN_HOUR = 60;
+
 export const COMMENT_DATE = [
   `2014/11/31 13:39`,
   `2020/4/31 11:29`,
@@ -100,4 +109,12 @@ export const FilterType = {
   WATCHLIST: `watchlist`,
   HISTORY: `history`,
   FAVORITES: `favorites`
+};
+
+export const StatsFilterType = {
+  ALL_TIME: `All time`,
+  TODAY: `Today`,
+  WEEK: `Week`,
+  MONTH: `Month`,
+  YEAR: `Year`,
 };

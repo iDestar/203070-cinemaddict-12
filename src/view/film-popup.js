@@ -54,7 +54,7 @@ const createEmojiListTemplate = (emoji, chosenEmoji) => {
 };
 
 const createFilmPopupTemplate = (card) => {
-  const {name, original, poster, description, rating, genre, ages, director, writers, actors, country, comments, isViewed, isInWatchList, isFavorited, commentEmoji} = card;
+  const {name, original, poster, description, rating, genres, ages, director, writers, actors, country, comments, isViewed, isInWatchList, isFavorited, commentEmoji} = card;
   const commentsList = generateTemplate(comments, createCommentTemplate);
   const emoji = commentEmojis.map((it) => createEmojiListTemplate(it, commentEmoji)).join(``);
 
@@ -108,7 +108,7 @@ const createFilmPopupTemplate = (card) => {
                   <tr class="film-details__row">
                     <td class="film-details__term">Genres</td>
                     <td class="film-details__cell">
-                    ${genre.map((g) => `<span class="film-details__genre">${g}</span>`).join(``)}
+                    ${genres.map((g) => `<span class="film-details__genre">${g}</span>`).join(``)}
                   </tr>
                 </table>
                 <p class="film-details__film-description">
