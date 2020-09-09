@@ -7,7 +7,7 @@ export default class MovieAmount extends AbstractView {
     this._films = films;
   }
 
-  getTemplate() {
+  _getTemplate() {
     return (
       `<p>${ this._films.length} movies inside</p>`
     );

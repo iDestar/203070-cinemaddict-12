@@ -65,12 +65,21 @@ export const NAMES = [
   `Aliquam erat `,
 ];
 
-export const EMOJI = [
-  `smile.png`,
-  `sleeping.png`,
-  `puke.png`,
-  `angry.png`,
+export const commentEmojis = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
 ];
+
+export const DateGap = {
+  MONTH: 12,
+  DAYS: 7,
+  HOURS: 10,
+  MINUTES: 60,
+};
+
+export const MINUTES_IN_HOUR = 60;
 
 export const COMMENT_DATE = [
   `2014/11/31 13:39`,
@@ -83,4 +92,29 @@ export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
   RATING: `rating`,
+};
+
+export const UserAction = {
+  UPDATE_FILM: `UPDATE_FILM`,
+};
+
+export const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+export const FilterType = {
+  ALL: `all`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`
+};
+
+export const StatsFilterType = {
+  ALL_TIME: `All time`,
+  TODAY: `Today`,
+  WEEK: `Week`,
+  MONTH: `Month`,
+  YEAR: `Year`,
 };
