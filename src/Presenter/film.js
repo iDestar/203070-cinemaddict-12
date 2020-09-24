@@ -136,11 +136,16 @@ export default class FilmPresenter {
     render(formDetailsBottomContainer, loadingView);
 
     const commentsModel = new CommentsModel();
-    const commentsPresenter = new CommentsPresenter(formDetailsBottomContainer, commentsModel, this._api);
+    const commentsPresenter = new CommentsPresenter(formDetailsBottomContainer, commentsModel, this._api, this._handleViewAction);
     this._api.getComments(this._film)
       .then((comments) => commentsModel.setComments(UpdateType.PATCH, comments))
       .then(() => remove(loadingView))
-      .then(() => commentsPresenter.init(this._film));
+      .then(() => commentsPresenter.init(this._film))
+      .catch(() => {
+        commentsModel.setComments(UpdateType.PATCH, []);
+        remove(loadingView);
+        commentsPresenter.init(this._film);
+      });
   }
 
 }

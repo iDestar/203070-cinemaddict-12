@@ -1,5 +1,5 @@
 
-import {humanizeRunTime, humanizeReleaseDate} from '../utils.js';
+import {humanizeRunTime, humanizeReleaseDate, generateTemplate} from '../utils.js';
 import AbstractView from './abstract.js';
 import {UpdateType, UserAction} from '../const.js';
 import {createElement, replace} from '../utils.js';
@@ -8,13 +8,6 @@ const Controls = {
   IS_IN_WATCHLIST: `isInWatchList`,
   IS_VIEWED: `isViewed`,
   IS_FAVORITED: `isFavorited`,
-};
-
-const generateTemplate = (data, template) => {
-  if (!data) {
-    return ``;
-  }
-  return data.map((it) => template(it)).join(``);
 };
 
 

@@ -98,13 +98,16 @@ export default class Board {
         this._api.updateFilm(update)
         .then((response) => this._filmsModel.updateFilm(updateType, response, callback));
         break;
+      case UserAction.UPDATE_LOCAL_FILM:
+        this._filmsModel.updateFilm(updateType, update, callback);
+        break;
       case UserAction.UPDATE_BOARD:
         this._clearFilmsBoard();
         this._renderFilmsBoard();
     }
   }
 
-  _handleModelAction(updateType, update, callback) {
+  _handleModelAction(updateType, update, viewCallback) {
     if (updateType === UpdateType.MINOR && this._filterModel.getFilter() === FilterType.ALL) {
       updateType = UpdateType.PATCH;
     }
@@ -115,8 +118,8 @@ export default class Board {
         this._renderFilmsBoard();
         break;
       case UpdateType.PATCH:
-        if (callback) {
-          callback();
+        if (viewCallback) {
+          viewCallback();
           return;
         }
         this._filmPresenter[update.id].init(update);

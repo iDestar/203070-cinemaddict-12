@@ -134,3 +134,11 @@ export const humanizeRunTime = (runTime) => {
   }
   return time.format(`mm[m]`);
 };
+
+
+export const generateTemplate = (data, template) => {
+  if (!data) {
+    return ``;
+  }
+  return data.map((it) => template(it)).join(``);
+};

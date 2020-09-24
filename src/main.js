@@ -2,7 +2,7 @@ import ProfileView from "./view/profile.js";
 import BoardPresenter from "./presenter/board.js";
 import MovieAmountView from "./view/movie-amount.js";
 import {render} from "./utils.js";
-import Api from './api.js';
+import Api from './api/api.js';
 import {UpdateType} from './const.js';
 
 import FilmsModel from './model/films.js';
