@@ -27,7 +27,7 @@ const apiWithProvider = new Provider(api, store);
 
 const filterModel = new FilterModel();
 const filmsModel = new FilmsModel();
-const filterModel = new FilterModel();
+
 
 const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, filmsModel);
 const filmsListPresenter = new FilmsListPresenter(siteMainElement, filmsModel, filterModel, apiWithProvider);
@@ -47,10 +47,6 @@ apiWithProvider.getFilms()
     userProfilePresenter.init();
     render(siteFooterElement, new FooterStatisticsView(filmsModel.getFilms().length));
   });
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 
 
 window.addEventListener(`load`, () => {
