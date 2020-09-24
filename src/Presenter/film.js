@@ -2,6 +2,9 @@ import {render, replace, remove} from "../utils.js";
 import {UpdateType, UserAction} from '../const.js';
 import FilmPopUpView from "../view/film-popup.js";
 import FilmsCardView from "../view/film-card.js";
+import CommentsPresenter from './comments.js';
+import CommentsModel from '../model/comments.js';
+import LoadingView from '../view/loading.js';
 
 const CARDSTATE = {
   OPENED: `OPENED`,
@@ -11,9 +14,10 @@ const CARDSTATE = {
 const ESCAPE_KEY = `Escape`;
 
 export default class FilmPresenter {
-  constructor(container, updateData, openOnlyOneFilmPopup) {
+  constructor(container, handleViewAction, openOnlyOneFilmPopup, api) {
     this._filmContainer = container;
-    this._updateData = updateData;
+    this._api = api;
+    this._handleViewAction = handleViewAction;
     this._popupState = CARDSTATE.CLOSED;
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
@@ -33,8 +37,8 @@ export default class FilmPresenter {
     const prevFilmCardComponent = this._filmCardComponent;
     const prevFilmDetailsComponent = this._filmDetailsComponent;
 
-    this._filmCardComponent = new FilmsCardView(film);
-    this._filmDetailsComponent = new FilmPopUpView(film, this._receiveNewFilmData);
+    this._filmCardComponent = new FilmsCardView(this._film);
+    this._filmDetailsComponent = new FilmPopUpView(this._film, this._handleViewAction);
 
     this._filmsListContainer = this._filmContainer.parentElement;
 
@@ -71,7 +75,7 @@ export default class FilmPresenter {
   }
 
   _addToWatchListHandler() {
-    this._updateData(
+    this._handleViewAction(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
         Object.assign({}, this._film, {isInWatchList: !this._film.isInWatchList})
@@ -79,7 +83,7 @@ export default class FilmPresenter {
   }
 
   _markAsWatchedHandler() {
-    this._updateData(
+    this._handleViewAction(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
         Object.assign({}, this._film, {isViewed: !this._film.isViewed})
@@ -87,7 +91,7 @@ export default class FilmPresenter {
   }
 
   _markAsFavoriteHandler() {
-    this._updateData(
+    this._handleViewAction(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
         Object.assign({}, this._film, {isFavorited: !this._film.isFavorited})
@@ -98,31 +102,18 @@ export default class FilmPresenter {
     this._renderFilmDetails(this._film);
   }
 
-  _receiveNewFilmData(newFilmData) {
-    this._newFilmData = newFilmData;
-  }
 
   _closeFilmDetails() {
     this._popupState = CARDSTATE.CLOSED;
     remove(this._filmDetailsComponent);
-    if (this._newFilmData) {
-      this._updateData(
-          UserAction.UPDATE_FILM,
-          UpdateType.MINOR,
-          Object.assign({}, this._newFilmData)
-      );
-      this._newFilmData = null;
-    }
+    this._handleViewAction(
+        UserAction.UPDATE_BOARD
+    );
   }
 
   _renderFilmDetails() {
     this._openOnlyOneFilmPopup();
     this._popupState = CARDSTATE.OPENED;
-    this._filmDetailsComponent.getElement()
-        .querySelector(`.film-details__comment-input`)
-        .addEventListener(`keydown`, (evt) => {
-          evt.stopPropagation();
-        });
 
 
     const onEscKeyDown = (evt) => {
@@ -140,6 +131,16 @@ export default class FilmPresenter {
     });
 
     render(this._filmsListContainer, this._filmDetailsComponent);
+    const formDetailsBottomContainer = this._filmDetailsComponent.getElement().querySelector(`.form-details__bottom-container`);
+    const loadingView = new LoadingView();
+    render(formDetailsBottomContainer, loadingView);
+
+    const commentsModel = new CommentsModel();
+    const commentsPresenter = new CommentsPresenter(formDetailsBottomContainer, commentsModel, this._api);
+    this._api.getComments(this._film)
+      .then((comments) => commentsModel.setComments(UpdateType.PATCH, comments))
+      .then(() => remove(loadingView))
+      .then(() => commentsPresenter.init(this._film));
   }
 
 }

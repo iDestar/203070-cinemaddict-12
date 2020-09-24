@@ -1,4 +1,8 @@
 import Abstract from "./view/abstract.js";
+import {MINUTES_IN_HOUR} from './const.js';
+
+
+import moment from 'moment';
 
 export const getRandomArrayElement = function (arr) {
 
@@ -114,4 +118,19 @@ export const userRank = (filmsViewed) => {
   }
 
   return rank;
+};
+
+export const humanizeCommentDate = (date) => {
+
+  return moment(date).fromNow();
+};
+
+export const humanizeReleaseDate = (releaseDate) => moment(releaseDate).format(`DD MMMM YYYY`);
+
+export const humanizeRunTime = (runTime) => {
+  const time = moment.utc().startOf(`day`).add({minutes: runTime});
+  if (runTime / MINUTES_IN_HOUR >= 1) {
+    return time.format(`H[h] mm[m]`);
+  }
+  return time.format(`mm[m]`);
 };

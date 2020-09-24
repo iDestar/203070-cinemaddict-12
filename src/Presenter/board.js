@@ -7,12 +7,13 @@ import FilmPresenter from './film.js';
 import {render, remove} from "../utils.js";
 import {FilterType, SortType, UpdateType, UserAction} from "../const.js";
 import {filter} from '../filter.js';
+import LoadingView from '../view/loading.js';
 
 const FILMS_COUNT_PER_STEP = 5;
 
 
 export default class Board {
-  constructor(boardContainer, filmsModel, filterModel) {
+  constructor(boardContainer, filmsModel, filterModel, api) {
     this._boardContainer = boardContainer;
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
@@ -30,6 +31,9 @@ export default class Board {
     this._clickSortingHandler = this._clickSortingHandler.bind(this);
     this._openOnlyOneFilmPopup = this._openOnlyOneFilmPopup.bind(this);
     this._handleModelAction = this._handleModelAction.bind(this);
+    this._isLoading = true;
+    this._loadingComponent = new LoadingView();
+    this._api = api;
 
   }
 
@@ -45,6 +49,7 @@ export default class Board {
     this._clearFilmsBoard({resetRenderedTaskCount: true, resetSortType: true});
     remove(this._listComponent);
     remove(this._boardComponent);
+    remove(this._loadingComponent);
     this.isDestroy = true;
 
     this._filmsModel.deleteObserver(this._handleModelAction);
@@ -87,20 +92,33 @@ export default class Board {
     }
   }
 
-  _handleViewAction(userAction, updateType, update) {
+  _handleViewAction(userAction, updateType, update, callback) {
     switch (userAction) {
       case UserAction.UPDATE_FILM:
-        this._filmsModel.updateFilm(updateType, update);
+        this._api.updateFilm(update)
+        .then((response) => this._filmsModel.updateFilm(updateType, response, callback));
         break;
+      case UserAction.UPDATE_BOARD:
+        this._clearFilmsBoard();
+        this._renderFilmsBoard();
     }
   }
 
-  _handleModelAction(updateType, update) {
+  _handleModelAction(updateType, update, callback) {
     if (updateType === UpdateType.MINOR && this._filterModel.getFilter() === FilterType.ALL) {
       updateType = UpdateType.PATCH;
     }
     switch (updateType) {
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderFilmsBoard();
+        break;
       case UpdateType.PATCH:
+        if (callback) {
+          callback();
+          return;
+        }
         this._filmPresenter[update.id].init(update);
         break;
       case UpdateType.MINOR:
@@ -133,6 +151,7 @@ export default class Board {
 
   _renderSorting() {
     if (this._filmsSortingComponent !== null) {
+      remove(this._filmsSortingComponent);
       this._filmsSortingComponent = null;
     }
 
@@ -141,12 +160,17 @@ export default class Board {
     render(this._boardContainer, this._filmsSortingComponent);
   }
 
+  _renderLoading() {
+    render(this._boardComponent, this._loadingComponent);
+  }
+
+
   _renderNoFilms() {
     render(this._boardComponent, this._noDataComponent);
   }
 
   _renderFilm(container, film) {
-    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._openOnlyOneFilmPopup);
+    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._openOnlyOneFilmPopup, this._api);
     filmPresenter.init(film);
 
     this._filmPresenter[film.id] = filmPresenter;
@@ -178,14 +202,21 @@ export default class Board {
   }
 
   _renderFilmsBoard() {
+    this._renderSorting();
+    render(this._boardContainer, this._boardComponent);
+
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     if (this._getFilms().length === 0) {
       this._renderNoFilms();
       return;
     }
 
-    this._renderSorting();
-    render(this._boardContainer, this._boardComponent);
-    render(this._boardComponent, this._listComponent);
+
+    render(this._boardContainer, this._listComponent);
     this._allFilmsContainerElement = this._boardComponent.getElement().querySelector(`.films-list__container`);
 
     const films = this._getFilms();
