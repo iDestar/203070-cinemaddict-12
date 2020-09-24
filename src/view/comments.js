@@ -1,10 +1,11 @@
 import he from "he";
-import {humanizeCommentDate, generateTemplate} from '../utils.js';
-import {commentEmojis, UpdateType, UserAction} from '../const.js';
+import {humanizeCommentDate, generateTemplate, findItemAndRemove} from '../utils/common.js';
+import {EMOJIS, UpdateType, UserAction} from '../const.js';
 import AbstractView from './abstract.js';
-import {createElement, replace} from '../utils.js';
+import {createElement, replace} from '../utils/render.js';
 
-const deleteButtonText = `Delete`;
+const DELETE_BUTTON_TEXT = `Delete`;
+const DELETING_BUTTON_TEXT = `Deleting...`;
 
 const createCommentTemplate = (userComment) => {
   const {
@@ -23,7 +24,7 @@ const createCommentTemplate = (userComment) => {
               <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
                 <span class="film-details__comment-day">${humanizeCommentDate(date)}</span>
-                <button class="film-details__comment-delete" data-id="${id}">${deleteButtonText}</button>
+                <button class="film-details__comment-delete" data-id="${id}">${DELETE_BUTTON_TEXT}</button>
               </p>
             </div>
           </li>`;
@@ -48,18 +49,22 @@ const createEmojiList = (emojiList) => {
 
 const createCommentsTemplate = (comments) => {
   const commentsList = generateTemplate(comments, createCommentTemplate);
-  const emojis = createEmojiList(commentEmojis);
+  const emojis = createEmojiList(EMOJIS);
 
   return `<section class="film-details__comments-wrap">
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+
        <ul class="film-details__comments-list">
             ${commentsList}
         </ul>
+
         <div class="film-details__new-comment">
           <div class="film-details__add-emoji-label"></div>
+
           <label class="film-details__comment-label">
             <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
           </label>
+
           <div class="film-details__emoji-list">
             ${emojis}
           </div>
@@ -83,15 +88,6 @@ export default class Comments extends AbstractView {
     return createCommentsTemplate(this._comments);
   }
 
-  _emojiChangeHandler(evt) {
-    const emoji = evt.target.value;
-    this._commentEmoji = emoji;
-
-    const oldEmoji = this.getElement().querySelector(`.film-details__add-emoji-label`);
-    const newEmoji = createElement(createEmojiTemplate(emoji));
-    replace(oldEmoji, newEmoji);
-  }
-
   _updateComments(response) {
     if (response) {
       this._comments = response;
@@ -101,37 +97,7 @@ export default class Comments extends AbstractView {
     commentsCounter.textContent = String(this._comments.length);
     const oldCommentsList = this.getElement().querySelector(`.film-details__comments-list`);
     oldCommentsList.innerHTML = generateTemplate(this._comments, createCommentTemplate);
-    this._deleteCommentHandler();
-  }
-
-  _deleteCommentClickHandler(evt) {
-    evt.preventDefault();
-
-    const commentId = evt.target.dataset.id;
-
-    const commentIndex = this._comments.findIndex((comment) => comment.id === commentId);
-    this._comments = [
-      ...this._comments.slice(0, commentIndex),
-      ...this._comments.slice(commentIndex + 1),
-    ];
-
-    const deleteButtonAction = () => {
-      const deleteButton = evt.target;
-      evt.target.textContent = evt.target.textContent !== deleteButtonText ? deleteButtonText : evt.target.textContent;
-      this._shake(deleteButton);
-      evt.target.disabled = false;
-    };
-
-    evt.target.textContent = `Deleting..`;
-    evt.target.disabled = true;
-
-    this._handleViewAction(
-        UserAction.DELETE_COMMENT,
-        UpdateType.PATCH,
-        this._updateComments,
-        commentId,
-        deleteButtonAction
-    );
+    this._deleteComment();
   }
 
   _resetCommentForm() {
@@ -141,12 +107,13 @@ export default class Comments extends AbstractView {
     textArea.value = ``;
     textArea.disabled = false;
     const emojiList = this.getElement().querySelector(`.film-details__emoji-list`);
-    emojiList.innerHTML = createEmojiList(commentEmojis);
+    emojiList.innerHTML = createEmojiList(EMOJIS);
+    this._commentEmoji = null;
   }
 
   _changeFormStatus() {
     const textArea = this.getElement().querySelector(`.film-details__comment-input`);
-    const emojiList = this.getElement().querySelectorAll(`.film-details__emoji-item`);
+    const emojisList = this.getElement().querySelectorAll(`.film-details__emoji-item`);
 
     const reverseDisableStatus = (element) => {
       if (element.disabled) {
@@ -157,7 +124,59 @@ export default class Comments extends AbstractView {
     };
 
     reverseDisableStatus(textArea);
-    emojiList.forEach((input) => reverseDisableStatus(input));
+    emojisList.forEach((input) => reverseDisableStatus(input));
+  }
+
+  _deleteComment() {
+    const commentsDeleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    if (commentsDeleteButtons) {
+      commentsDeleteButtons.forEach((deleteButton) => deleteButton.addEventListener(`click`, this._deleteCommentClickHandler));
+    }
+  }
+
+  _setInnerHandlers() {
+    this._deleteComment();
+    this.getElement().querySelector(`.film-details__emoji-list`)
+      .addEventListener(`change`, this._emojiChangeHandler);
+    this.getElement().querySelector(`.film-details__comment-input`)
+      .addEventListener(`keydown`, this._sendCommentKeydownHandler);
+    this.getElement().querySelector(`.film-details__comment-input`)
+      .addEventListener(`keydown`, (evt) => {
+        evt.stopPropagation();
+      });
+  }
+
+  _emojiChangeHandler(evt) {
+    const emoji = evt.target.value;
+    this._commentEmoji = emoji;
+
+    const oldEmoji = this.getElement().querySelector(`.film-details__add-emoji-label`);
+    const newEmoji = createElement(createEmojiTemplate(emoji));
+    replace(oldEmoji, newEmoji);
+  }
+
+  _deleteCommentClickHandler(evt) {
+    evt.preventDefault();
+    const commentId = evt.target.dataset.id;
+    this._comments = findItemAndRemove(this._comments, commentId);
+
+    const deleteButtonAction = () => {
+      const deleteButton = evt.target;
+      evt.target.textContent = evt.target.textContent !== DELETE_BUTTON_TEXT ? DELETE_BUTTON_TEXT : evt.target.textContent;
+      this._shake(deleteButton);
+      evt.target.disabled = false;
+    };
+
+    evt.target.textContent = DELETING_BUTTON_TEXT;
+    evt.target.disabled = true;
+
+    this._handleViewAction(
+        UserAction.DELETE_COMMENT,
+        UpdateType.PATCH,
+        this._updateComments,
+        commentId,
+        deleteButtonAction
+    );
   }
 
   _sendCommentKeydownHandler(evt) {
@@ -190,24 +209,5 @@ export default class Comments extends AbstractView {
       );
 
     }
-  }
-
-  _deleteCommentHandler() {
-    const commentsDeleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
-    if (commentsDeleteButtons) {
-      commentsDeleteButtons.forEach((deleteButton) => deleteButton.addEventListener(`click`, this._deleteCommentClickHandler));
-    }
-  }
-
-  _setInnerHandlers() {
-    this._deleteCommentHandler();
-    this.getElement().querySelector(`.film-details__emoji-list`)
-      .addEventListener(`change`, this._emojiChangeHandler);
-    this.getElement().querySelector(`.film-details__comment-input`)
-      .addEventListener(`keydown`, this._sendCommentKeydownHandler);
-    this.getElement().querySelector(`.film-details__comment-input`)
-      .addEventListener(`keydown`, (evt) => {
-        evt.stopPropagation();
-      });
   }
 }

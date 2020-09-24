@@ -1,22 +1,18 @@
-import {createElement} from "../utils.js";
+<<<<<<< Updated upstream
+import {createElement} from '../utils/render.js';
+=======
+import {createElement} from '../utils.js';
+>>>>>>> Stashed changes
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export default class Abstract {
   constructor() {
     if (new.target === Abstract) {
-      throw new Error(`Can't instantiate Abstract, only concrete one.`);
+      throw new Error(`Abstract class cannot be called with operator "new"`);
     }
-
     this._element = null;
     this._callback = {};
-  }
-
-  _shake(element) {
-    element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    setTimeout(() => {
-      element.style.animation = ``;
-    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   _getTemplate() {
@@ -27,11 +23,17 @@ export default class Abstract {
     if (!this._element) {
       this._element = createElement(this._getTemplate());
     }
-
     return this._element;
   }
 
   removeElement() {
     this._element = null;
+  }
+
+  _shake(element) {
+    element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      element.style.animation = ``;
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }
