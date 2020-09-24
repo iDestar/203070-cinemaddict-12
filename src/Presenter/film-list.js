@@ -1,9 +1,9 @@
 import AllFilmsView from '../view/all-films.js';
-import ShowMoreButton from '../view/show-more-button.js';
+import LoadMoreButtonView from '../view/load-more-button.js';
 import NoFilmsView from '../view/no-films.js';
 import FilmsSortingView from '../view/films-sorting.js';
 import FilmsContainerView from '../view/films-container.js';
-import {render, remove} from '../utils/render.js';
+import {render, removeComponent} from '../utils/render.js';
 import {SortType, UpdateType, UserAction, FilmsType} from '../const.js';
 import FilmPresenter from './film.js';
 import {filter} from '../utils/filter.js';
@@ -54,9 +54,9 @@ export default class FilmList {
 
   destroy() {
     this._clearFilmsBoard({resetRenderedTaskCount: true, resetSortType: true});
-    remove(this._allFilmsComponent);
-    remove(this._filmsListContainer);
-    remove(this._loadingComponent);
+    removeComponent(this._allFilmsComponent);
+    removeComponent(this._filmsListContainer);
+    removeComponent(this._loadingComponent);
     this.isDestroy = true;
 
     this._filmsModel.deleteObserver(this._handleModelAction);
@@ -91,18 +91,18 @@ export default class FilmList {
     this._ratedFilmPresenter = {};
     this._commentedFilmPresenter = {};
 
-    remove(this._filmsSortingComponent);
-    remove(this._noFilmsViewComponent);
+    removeComponent(this._filmsSortingComponent);
+    removeComponent(this._noFilmsViewComponent);
     if (this._topRatedFilmsView) {
-      remove(this._topRatedFilmsView);
+      removeComponent(this._topRatedFilmsView);
     }
     if (this._topCommentedFilmsView) {
-      remove(this._topCommentedFilmsView);
+      removeComponent(this._topCommentedFilmsView);
     }
 
 
     if (this._loadMoreButtonComponent) {
-      remove(this._loadMoreButtonComponent);
+      removeComponent(this._loadMoreButtonComponent);
     }
 
     if (resetRenderedTaskCount) {
@@ -122,7 +122,7 @@ export default class FilmList {
 
   _renderSorting() {
     if (this._filmsSortingComponent !== null) {
-      remove(this._filmsSortingComponent);
+      removeComponent(this._filmsSortingComponent);
       this._filmsSortingComponent = null;
     }
 
@@ -160,7 +160,7 @@ export default class FilmList {
     if (this._loadMoreButtonComponent !== null) {
       this._loadMoreButtonComponent = null;
     }
-    this._loadMoreButtonComponent = new ShowMoreButton();
+    this._loadMoreButtonComponent = new LoadMoreButtonView();
     render(this._allFilmsComponent, this._loadMoreButtonComponent);
     this._loadMoreButtonComponent.setClickHandler(() => {
       this._clickLoadMoreButtonHandler();
@@ -251,7 +251,7 @@ export default class FilmList {
     }
 
     if (this._filmsShowing >= films.length) {
-      remove(this._loadMoreButtonComponent);
+      removeComponent(this._loadMoreButtonComponent);
     }
   }
 
@@ -275,7 +275,7 @@ export default class FilmList {
     switch (updateType) {
       case UpdateType.INIT:
         this._isLoading = false;
-        remove(this._loadingComponent);
+        removeComponent(this._loadingComponent);
         this._renderFilmsBoard();
         break;
       case UpdateType.PATCH:

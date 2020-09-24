@@ -1,5 +1,5 @@
 import {UpdateType, UserAction} from '../const.js';
-import {remove, render} from '../utils/render.js';
+import {removeComponent, render} from '../utils/render.js';
 import CommentView from '../view/comments.js';
 import FilmsModel from '../model/films.js';
 
@@ -29,7 +29,7 @@ export default class Comments {
   }
 
   _destroy() {
-    remove(this._commentsView);
+    removeComponent(this._commentsView);
     this._commentsModel.deleteObserver(this._handleModelAction);
   }
 
@@ -57,10 +57,7 @@ export default class Comments {
       case UserAction.CREATE_COMMENT:
         this._api.createComment(this._film, update)
           .then((response) => {
-
             this._film.comments = response.comments.map((comment) => comment.id);
-
-
             this._handleFilmsViewAction(
                 UserAction.UPDATE_LOCAL_FILM,
                 UpdateType.JUST_DATA,

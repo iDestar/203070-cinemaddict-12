@@ -1,4 +1,4 @@
-import {render, replace, remove} from "../utils/render.js";
+import {render, replace, removeComponent} from "../utils/render.js";
 import {filter} from "../utils/filter.js";
 import {FilterType, UpdateType} from "../const.js";
 import SiteMenuView from '../view/site-menu.js';
@@ -38,7 +38,7 @@ export default class SiteMenu {
     }
 
     replace(prevSiteMenuComponent, this._siteMenuComponent);
-    remove(prevSiteMenuComponent);
+    removeComponent(prevSiteMenuComponent);
   }
 
   _getFilters() {

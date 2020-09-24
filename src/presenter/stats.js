@@ -1,5 +1,5 @@
 import StatsView from '../view/stats.js';
-import {remove, render} from '../utils/render.js';
+import {removeComponent, render} from '../utils/render.js';
 
 export default class Stats {
   constructor(statsContainer, filmsModel) {
@@ -23,7 +23,7 @@ export default class Stats {
   }
 
   destroy() {
-    remove(this._statsComponent);
+    removeComponent(this._statsComponent);
     this._filmsModel.deleteObserver(this._handleModelStatsAction);
   }
 

@@ -1,5 +1,5 @@
 import UserProfileView from '../view/user-profile.js';
-import {remove, render} from '../utils/render.js';
+import {removeComponent, render} from '../utils/render.js';
 import {FilterType, UpdateType} from '../const.js';
 import {filter} from '../utils/filter.js';
 
@@ -27,7 +27,7 @@ export default class UserProfile {
   }
 
   _destroy() {
-    remove(this._userProfileView);
+    removeComponent(this._userProfileView);
     this._filmsModel.deleteObserver(this._handleModelAction);
   }
 

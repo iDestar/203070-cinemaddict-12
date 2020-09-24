@@ -1,6 +1,4 @@
-
 import {createElement} from '../utils/render.js';
-
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
