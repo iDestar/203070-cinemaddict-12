@@ -1,9 +1,11 @@
 import SmartView from './smart.js';
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {MINUTES_IN_HOUR, StatsFilterType} from '../const.js';
-import {userRank} from '../utils.js';
-import {statsFilter} from '../stats-filter.js';
+import {MINUTES_IN_HOUR, StatsFilterType, EMPTY_GENRE} from '../const.js';
+import {getUserRank} from '../utils/common.js';
+import {statsFilter} from '../utils/stats-filter.js';
+
+const BAR_HEIGHT = 50;
 
 const totalDurationTemplate = (films) => {
   const totalMinutes = films.reduce((acc, item) => {
@@ -21,7 +23,7 @@ const countFilmGenres = (films) => {
   films.forEach((film) => {
     let [mainGenre] = film.genres;
     if (!mainGenre) {
-      mainGenre = ``;
+      mainGenre = EMPTY_GENRE;
     }
     if (!result[mainGenre]) {
       result[mainGenre] = 1;
@@ -47,7 +49,6 @@ const createSortTemplate = (currentSortType) => {
 };
 
 const renderChart = (element, sortedFilms) => {
-  const BAR_HEIGHT = 50;
   const statisticCtx = element.querySelector(`.statistic__chart`);
   const genres = sortedFilms.map(([it]) => it);
   const genresCount = sortedFilms.map(([, it]) => it);
@@ -111,18 +112,19 @@ const renderChart = (element, sortedFilms) => {
   });
 };
 
-
 const createStatsTemplate = (filmsViewed, filmsFiltered, topGenre, currentSortType) => {
   return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">${userRank(filmsViewed.length)}</span>
+      <span class="statistic__rank-label">${getUserRank(filmsViewed.length)}</span>
     </p>
+
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
       ${createSortTemplate(currentSortType)}
     </form>
+
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
@@ -137,9 +139,11 @@ const createStatsTemplate = (filmsViewed, filmsFiltered, topGenre, currentSortTy
         <p class="statistic__item-text">${topGenre}</p>
       </li>
     </ul>
+
     <div class="statistic__chart-wrap">
       <canvas class="statistic__chart" width="1000"></canvas>
     </div>
+
   </section>`;
 };
 
@@ -150,11 +154,6 @@ export default class Stats extends SmartView {
     this._filterClickHandler = this._filterClickHandler.bind(this);
     this._currentStatFilter = StatsFilterType.ALL_TIME;
     this._setChart();
-  }
-
-  _getFilms() {
-    this._filteredFilms = statsFilter[this._currentStatFilter](this._filmsViewed);
-    this._filmsViewedSorted = sortFilmsGenres(this._filteredFilms);
   }
 
   _getTemplate() {
@@ -168,6 +167,16 @@ export default class Stats extends SmartView {
   _restoreHandlers() {
     this._setChart();
     this.setClickFilterHandler();
+  }
+
+  setClickFilterHandler() {
+    const filters = this.getElement().querySelectorAll(`.statistic__filters-label`);
+    filters.forEach((filter) => filter.addEventListener(`click`, this._filterClickHandler));
+  }
+
+  _getFilms() {
+    this._filteredFilms = statsFilter[this._currentStatFilter](this._filmsViewed);
+    this._filmsViewedSorted = sortFilmsGenres(this._filteredFilms);
   }
 
   _setChart() {
@@ -186,10 +195,5 @@ export default class Stats extends SmartView {
     this._getFilms();
     this.updateElement();
     this._restoreHandlers();
-  }
-
-  setClickFilterHandler() {
-    const filters = this.getElement().querySelectorAll(`.statistic__filters-label`);
-    filters.forEach((filter) => filter.addEventListener(`click`, this._filterClickHandler));
   }
 }

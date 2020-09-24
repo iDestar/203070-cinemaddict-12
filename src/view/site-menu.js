@@ -1,10 +1,9 @@
-import AbstractView from "./abstract.js";
+import AbstractView from './abstract.js';
 
 const filterButtonActiveClass = `main-navigation__item--active`;
 const statsButtonActiveClass = `main-navigation__additional--active`;
 
-
-const createNavigationTemplate = (filters, currentFilter) => {
+const createSiteMenuTemplate = (filters, currentFilter) => {
   const createFilterTemplate = (filterItem) => {
     const {type, name, count} = filterItem;
     const isActiveItem = type === currentFilter ? filterButtonActiveClass : ``;
@@ -22,7 +21,7 @@ const createNavigationTemplate = (filters, currentFilter) => {
 };
 
 
-export default class Navigation extends AbstractView {
+export default class SiteMenu extends AbstractView {
   constructor(filters, currentFilter) {
     super();
     this._filters = filters;
@@ -32,7 +31,19 @@ export default class Navigation extends AbstractView {
   }
 
   _getTemplate() {
-    return createNavigationTemplate(this._filters, this._currentFilter);
+    return createSiteMenuTemplate(this._filters, this._currentFilter);
+  }
+
+  setFilterClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.main-navigation__items`)
+      .addEventListener(`click`, this._filterClickHandler);
+  }
+
+  setStatsClickHandler(callback) {
+    this._callback.statsClick = callback;
+    this.getElement().querySelector(`.main-navigation__additional`)
+      .addEventListener(`click`, this._statsClickHandler);
   }
 
   _filterClickHandler(evt) {
@@ -43,12 +54,6 @@ export default class Navigation extends AbstractView {
     this._callback.click(evt.target.dataset.filterType);
   }
 
-  setFilterClickHandler(callback) {
-    this._callback.click = callback;
-    this.getElement().querySelector(`.main-navigation__items`)
-        .addEventListener(`click`, this._filterClickHandler);
-  }
-
   _statsClickHandler(evt) {
     evt.preventDefault();
     this._callback.statsClick();
@@ -57,11 +62,5 @@ export default class Navigation extends AbstractView {
     if (activeFilter) {
       activeFilter.classList.remove(filterButtonActiveClass);
     }
-  }
-
-  setStatsClickHandler(callback) {
-    this._callback.statsClick = callback;
-    this.getElement().querySelector(`.main-navigation__additional`)
-        .addEventListener(`click`, this._statsClickHandler);
   }
 }

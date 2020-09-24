@@ -1,4 +1,4 @@
-import {StatsFilterType} from './const.js';
+import {StatsFilterType} from '../const.js';
 import moment from 'moment';
 
 export const statsFilter = {

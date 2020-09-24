@@ -1,42 +1,62 @@
-import ProfileView from "./view/profile.js";
-import BoardPresenter from "./presenter/board.js";
-import MovieAmountView from "./view/movie-amount.js";
-import {render} from "./utils.js";
-import Api from './api/api.js';
-import {UpdateType} from './const.js';
-
+import {render} from './utils/render.js';
+import FilmsListPresenter from './presenter/film-list.js';
+import FooterStatisticsView from './view/footer-statistics.js';
 import FilmsModel from './model/films.js';
 import FilterModel from './model/filter.js';
-import FilterPresenter from './presenter/filter.js';
+import SiteMenuPresenter from './presenter/site-menu.js';
+import Api from './api/api.js';
+import {UpdateType} from './const.js';
+import Store from './api/store.js';
+import Provider from './api/provider.js';
+import UserProfilePresenter from './presenter/user-profile.js';
 
 const URL = `https://12.ecmascript.pages.academy/cinemaddict`;
-const AUTH = `Basic sdfdsf!`;
+const AUTH = `Basic jkdsfhjk`;
+const STORE_PREFIX = `cinemaddict-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
+const siteBodyElement = document.querySelector(`body`);
+const siteHeaderElement = siteBodyElement.querySelector(`.header`);
+const siteMainElement = siteBodyElement.querySelector(`.main`);
+const siteFooterElement = siteBodyElement.querySelector(`.footer`);
 
 const api = new Api(URL, AUTH);
-
-const siteHeaderElement = document.querySelector(`.header`);
-const siteMainElement = document.querySelector(`.main`);
-const siteFooterElement = document.querySelector(`.footer`);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
 const filmsModel = new FilmsModel();
+const filterModel = new FilterModel();
 
-api.getFilms()
+const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, filmsModel);
+const filmsListPresenter = new FilmsListPresenter(siteMainElement, filmsModel, filterModel, apiWithProvider);
+const siteMenuPresenter = new SiteMenuPresenter(siteMainElement, filterModel, filmsModel, filmsListPresenter);
+
+siteMenuPresenter.init();
+filmsListPresenter.init();
+
+apiWithProvider.getFilms()
   .then((films) => {
     filmsModel.setFilms(UpdateType.INIT, films);
-    const filmsViewed = filmsModel.getFilms().filter((film) => film.isViewed).length;
-    render(siteHeaderElement, new ProfileView(filmsViewed));
-    render(siteFooterElement, new MovieAmountView(filmsModel.getFilms().length));
+    userProfilePresenter.init();
+    render(siteFooterElement, new FooterStatisticsView(filmsModel.getFilms().length));
   })
   .catch(() => {
     filmsModel.setFilms(UpdateType.INIT, []);
-    render(siteHeaderElement, new ProfileView(filmsModel.getFilms()));
-    render(siteFooterElement, new MovieAmountView(filmsModel.getFilms().length));
+    userProfilePresenter.init();
+    render(siteFooterElement, new FooterStatisticsView(filmsModel.getFilms().length));
   });
-const filterModel = new FilterModel();
 
-const filmsListPresenter = new BoardPresenter(siteMainElement, filmsModel, filterModel, api);
-const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel, filmsListPresenter);
 
-filterPresenter.init();
-filmsListPresenter.init();
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`);
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});

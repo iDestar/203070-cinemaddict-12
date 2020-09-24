@@ -1,19 +1,30 @@
-
-
-export const commentEmojis = [
+export const DESCRIPTION_MAX_LETTERS = 139;
+export const MINUTES_IN_HOUR = 60;
+export const EMPTY_GENRE = `No genre`;
+export const EMOJIS = [
   `smile`,
   `sleeping`,
   `puke`,
   `angry`,
 ];
 
-export const MINUTES_IN_HOUR = 60;
+export const UserRank = {
+  FAN: `fan`,
+  NOVICE: `novice`,
+  MOVIE_BUFF: `movie buff`,
+};
 
+export const RenderPlace = {
+  BEFOREEND: `beforeend`,
+  AFTEREND: `afterend`,
+  BEFOREBEGIN: `beforebegin`,
+  AFTERBEGIN: `afterbegin`,
+};
 
 export const SortType = {
-  DEFAULT: `default`,
-  DATE: `date`,
-  RATING: `rating`,
+  BY_DEFAULT: `default`,
+  BY_DATE: `date`,
+  BY_RATING: `rating`,
 };
 
 export const UserAction = {
@@ -36,7 +47,7 @@ export const FilterType = {
   ALL: `all`,
   WATCHLIST: `watchlist`,
   HISTORY: `history`,
-  FAVORITES: `favorites`
+  FAVORITES: `favorites`,
 };
 
 export const StatsFilterType = {
@@ -45,4 +56,10 @@ export const StatsFilterType = {
   WEEK: `Week`,
   MONTH: `Month`,
   YEAR: `Year`,
+};
+
+export const FilmsType = {
+  ALL: `ALL`,
+  RATED: `RATED`,
+  COMMENTED: `COMMENTED`
 };

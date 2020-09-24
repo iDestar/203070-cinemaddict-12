@@ -1,24 +1,25 @@
-import {render, replace, remove} from "../utils.js";
+import FilmCardView from '../view/film-card.js';
+import {remove, render, replace} from '../utils/render.js';
+import FilmDetailsView from '../view/film-details.js';
 import {UpdateType, UserAction} from '../const.js';
-import FilmPopUpView from "../view/film-popup.js";
-import FilmsCardView from "../view/film-card.js";
 import CommentsPresenter from './comments.js';
 import CommentsModel from '../model/comments.js';
 import LoadingView from '../view/loading.js';
 
-const CARDSTATE = {
+const ESCAPE_KEY = `Escape`;
+
+const PopupState = {
   OPENED: `OPENED`,
   CLOSED: `CLOSED`,
 };
 
-const ESCAPE_KEY = `Escape`;
-
-export default class FilmPresenter {
-  constructor(container, handleViewAction, openOnlyOneFilmPopup, api) {
+export default class Film {
+  constructor(container, handleViewAction, openOnlyOneFilmPopup, api, siteMainElement) {
     this._filmContainer = container;
     this._api = api;
+    this._siteMainElement = siteMainElement;
     this._handleViewAction = handleViewAction;
-    this._popupState = CARDSTATE.CLOSED;
+    this._popupState = PopupState.CLOSED;
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
     this._openOnlyOneFilmPopup = openOnlyOneFilmPopup;
@@ -27,8 +28,8 @@ export default class FilmPresenter {
     this._addToWatchListHandler = this._addToWatchListHandler.bind(this);
     this._markAsWatchedHandler = this._markAsWatchedHandler.bind(this);
     this._markAsFavoriteHandler = this._markAsFavoriteHandler.bind(this);
-    this._receiveNewFilmData = this._receiveNewFilmData.bind(this);
     this.closeAllFilmDetails = this.closeAllFilmDetails.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
   init(film) {
@@ -37,10 +38,8 @@ export default class FilmPresenter {
     const prevFilmCardComponent = this._filmCardComponent;
     const prevFilmDetailsComponent = this._filmDetailsComponent;
 
-    this._filmCardComponent = new FilmsCardView(this._film);
-    this._filmDetailsComponent = new FilmPopUpView(this._film, this._handleViewAction);
-
-    this._filmsListContainer = this._filmContainer.parentElement;
+    this._filmCardComponent = new FilmCardView(this._film);
+    this._filmDetailsComponent = new FilmDetailsView(this._film, this._handleViewAction);
 
     this._filmCardComponent.setCardOpenClickHandler(this._filmOpenCardClickHandler);
     this._filmCardComponent.setAddToWatchListClickHandler(this._addToWatchListHandler);
@@ -51,11 +50,12 @@ export default class FilmPresenter {
       render(this._filmContainer, this._filmCardComponent);
       return;
     }
-    if (this._popupState === CARDSTATE.CLOSED) {
+
+    if (this._popupState === PopupState.CLOSED) {
       replace(prevFilmCardComponent, this._filmCardComponent);
     }
 
-    if (this._popupState === CARDSTATE.OPENED) {
+    if (this._popupState === PopupState.OPENED) {
       replace(prevFilmDetailsComponent, this._filmDetailsComponent);
     }
 
@@ -69,42 +69,14 @@ export default class FilmPresenter {
   }
 
   closeAllFilmDetails() {
-    if (this._popupState === CARDSTATE.OPENED) {
+    if (this._popupState === PopupState.OPENED) {
       this._closeFilmDetails();
     }
   }
 
-  _addToWatchListHandler() {
-    this._handleViewAction(
-        UserAction.UPDATE_FILM,
-        UpdateType.MINOR,
-        Object.assign({}, this._film, {isInWatchList: !this._film.isInWatchList})
-    );
-  }
-
-  _markAsWatchedHandler() {
-    this._handleViewAction(
-        UserAction.UPDATE_FILM,
-        UpdateType.MINOR,
-        Object.assign({}, this._film, {isViewed: !this._film.isViewed})
-    );
-  }
-
-  _markAsFavoriteHandler() {
-    this._handleViewAction(
-        UserAction.UPDATE_FILM,
-        UpdateType.MINOR,
-        Object.assign({}, this._film, {isFavorited: !this._film.isFavorited})
-    );
-  }
-
-  _filmOpenCardClickHandler() {
-    this._renderFilmDetails(this._film);
-  }
-
-
   _closeFilmDetails() {
-    this._popupState = CARDSTATE.CLOSED;
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    this._popupState = PopupState.CLOSED;
     remove(this._filmDetailsComponent);
     this._handleViewAction(
         UserAction.UPDATE_BOARD
@@ -113,24 +85,16 @@ export default class FilmPresenter {
 
   _renderFilmDetails() {
     this._openOnlyOneFilmPopup();
-    this._popupState = CARDSTATE.OPENED;
+    this._popupState = PopupState.OPENED;
 
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === ESCAPE_KEY) {
-        this._closeFilmDetails();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    document.addEventListener(`keydown`, onEscKeyDown);
+    document.addEventListener(`keydown`, this._escKeyDownHandler);
 
     this._filmDetailsComponent.setCloseFilmDetailsClickHandler(() => {
       this._closeFilmDetails();
-      document.removeEventListener(`keydown`, onEscKeyDown);
+      document.removeEventListener(`keydown`, this._escKeyDownHandler);
     });
 
-    render(this._filmsListContainer, this._filmDetailsComponent);
+    render(this._siteMainElement, this._filmDetailsComponent);
     const formDetailsBottomContainer = this._filmDetailsComponent.getElement().querySelector(`.form-details__bottom-container`);
     const loadingView = new LoadingView();
     render(formDetailsBottomContainer, loadingView);
@@ -148,4 +112,37 @@ export default class FilmPresenter {
       });
   }
 
+  _addToWatchListHandler() {
+    this._handleViewAction(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        Object.assign({}, this._film, {isInWatchList: !this._film.isInWatchList})
+    );
+  }
+
+  _markAsWatchedHandler() {
+    this._handleViewAction(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        Object.assign({}, this._film, {isViewed: !this._film.isViewed, watchingDate: new Date()})
+    );
+  }
+
+  _markAsFavoriteHandler() {
+    this._handleViewAction(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        Object.assign({}, this._film, {isFavorited: !this._film.isFavorited})
+    );
+  }
+
+  _filmOpenCardClickHandler() {
+    this._renderFilmDetails(this._film);
+  }
+
+  _escKeyDownHandler(evt) {
+    if (evt.key === ESCAPE_KEY) {
+      this._closeFilmDetails();
+    }
+  }
 }
