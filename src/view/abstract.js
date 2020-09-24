@@ -1,8 +1,6 @@
-<<<<<<< Updated upstream
+
 import {createElement} from '../utils/render.js';
-=======
-import {createElement} from '../utils.js';
->>>>>>> Stashed changes
+
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 

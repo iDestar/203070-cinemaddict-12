@@ -13,15 +13,11 @@ const PopupState = {
   CLOSED: `CLOSED`,
 };
 
-<<<<<<< Updated upstream
-export default class Film {
-  constructor(container, handleViewAction, openOnlyOneFilmPopup, api, siteMainElement) {
-=======
-const ESCAPE_KEY = `Escape`;
 
 export default class Film {
-  constructor(container, handleViewAction, openOnlyOneFilmPopup, api) {
->>>>>>> Stashed changes
+  constructor(container, handleViewAction, openOnlyOneFilmPopup, api, siteMainElement) {
+
+
     this._filmContainer = container;
     this._api = api;
     this._siteMainElement = siteMainElement;
