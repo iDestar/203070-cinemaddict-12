@@ -48,7 +48,7 @@ export default class SiteMenu {
       {
         type: FilterType.ALL,
         name: `All`,
-        count: ``,
+        count: filter[FilterType.ALL](films).length
       },
       {
         type: FilterType.WATCHLIST,

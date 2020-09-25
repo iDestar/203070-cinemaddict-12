@@ -7,7 +7,13 @@ const createSiteMenuTemplate = (filters, currentFilter) => {
   const createFilterTemplate = (filterItem) => {
     const {type, name, count} = filterItem;
     const isActiveItem = type === currentFilter ? filterButtonActiveClass : ``;
-    return `<a href="#${name}" class="main-navigation__item ${isActiveItem}" data-filter-type=${type} >${name}<span class="main-navigation__item-count">${count}</span></a>`;
+    if (name === `All`) {
+      return `<a href="#${name}" class="main-navigation__item ${isActiveItem}" data-filter-type=${type} >
+       ${name}`;
+    }
+    return `<a href="#${name}" class="main-navigation__item ${isActiveItem}" data-filter-type=${type} >
+     ${name}<span class="main-navigation__item-count">
+     ${count}</span></a>`;
   };
 
   const generatedFiltersTemplate = filters.map(createFilterTemplate).join(``);
