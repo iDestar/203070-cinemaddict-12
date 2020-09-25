@@ -11,7 +11,7 @@ import Provider from './api/provider.js';
 import UserProfilePresenter from './presenter/user-profile.js';
 
 const URL = `https://12.ecmascript.pages.academy/cinemaddict`;
-const AUTH = `Basic jkdsfhjk`;
+const AUTH = `Basic asdas`;
 const STORE_PREFIX = `cinemaddict-localstorage`;
 const STORE_VER = `v1`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;

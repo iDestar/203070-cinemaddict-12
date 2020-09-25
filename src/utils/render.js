@@ -44,7 +44,11 @@ export const replace = (oldItem, newItem) => {
   parentElement.replaceChild(newItem, oldItem);
 };
 
+<<<<<<< HEAD
 export const remove = (component) => {
+=======
+export const removeComponent = (component) => {
+>>>>>>> module8-task1
   if (!(component instanceof Abstract)) {
     throw new Error(`Can remove only Components!`);
   }

@@ -1,5 +1,5 @@
 import FilmCardView from '../view/film-card.js';
-import {remove, render, replace} from '../utils/render.js';
+import {removeComponent, render, replace} from '../utils/render.js';
 import FilmDetailsView from '../view/film-details.js';
 import {UpdateType, UserAction} from '../const.js';
 import CommentsPresenter from './comments.js';
@@ -59,13 +59,13 @@ export default class Film {
       replace(prevFilmDetailsComponent, this._filmDetailsComponent);
     }
 
-    remove(prevFilmDetailsComponent);
-    remove(prevFilmCardComponent);
+    removeComponent(prevFilmDetailsComponent);
+    removeComponent(prevFilmCardComponent);
   }
 
   destroy() {
-    remove(this._filmCardComponent);
-    remove(this._filmDetailsComponent);
+    removeComponent(this._filmCardComponent);
+    removeComponent(this._filmDetailsComponent);
   }
 
   closeAllFilmDetails() {
@@ -77,7 +77,7 @@ export default class Film {
   _closeFilmDetails() {
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
     this._popupState = PopupState.CLOSED;
-    remove(this._filmDetailsComponent);
+    removeComponent(this._filmDetailsComponent);
     this._handleViewAction(
         UserAction.UPDATE_BOARD
     );
@@ -103,11 +103,11 @@ export default class Film {
     const commentsPresenter = new CommentsPresenter(formDetailsBottomContainer, commentsModel, this._api, this._handleViewAction);
     this._api.getComments(this._film)
       .then((comments) => commentsModel.setComments(UpdateType.PATCH, comments))
-      .then(() => remove(loadingView))
+      .then(() => removeComponent(loadingView))
       .then(() => commentsPresenter.init(this._film))
       .catch(() => {
         commentsModel.setComments(UpdateType.PATCH, []);
-        remove(loadingView);
+        removeComponent(loadingView);
         commentsPresenter.init(this._film);
       });
   }
