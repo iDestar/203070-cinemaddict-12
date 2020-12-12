@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
-* Студент: [Владимир Зуев](https://up.htmlacademy.ru/ecmascript/12/user/203070).
-* Наставник: `Александр Тимоновский`.
+- Студент: [Владимир Зуев](https://up.htmlacademy.ru/ecmascript/12/user/203070).
+- Наставник: ``.
 
 ---
 
