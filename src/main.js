@@ -1,4 +1,7 @@
 "use strict";
+
+const CARD_COUNT = 5;
+
 const header = document.querySelector(".header");
 const main = document.querySelector(".main");
 
@@ -115,7 +118,7 @@ const filmCard = () => {
 };
 
 function filmCardRender() {
-  for (let i = 0; i <= 4; i++) {
+  for (let i = 0; i < CARD_COUNT; i++) {
     render(filmListContainer, filmCard(), `beforeend`);
   }
 }
