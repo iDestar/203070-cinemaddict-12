@@ -1,7 +1,3 @@
-"use strict";
-
-alert("Hi");
-
 const CARD_COUNT = 5;
 
 const header = document.querySelector(".header");
