@@ -91,10 +91,7 @@
   !*** ./src/main.js ***!
   \*********************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
+/***/ (function(module, exports) {
 
 const CARD_COUNT = 5;
 
